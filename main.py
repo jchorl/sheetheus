@@ -12,6 +12,7 @@ from prometheus_client import start_http_server, Gauge
 SCOPES = ["https://www.googleapis.com/auth/spreadsheets"]
 
 FINANCE_SPREADSHEET_ID = os.getenv("FINANCE_SPREADSHEET_ID")
+PORT = os.getenv("PORT", 8080)
 IGNORED_SHEETS = ["Template", "Categories", "IRA/401k/HSA log"]
 
 
@@ -89,9 +90,7 @@ def get_labels(transaction):
     }
 
 
-def get_metrics():
-    creds = get_google_creds()
-    service = build("sheets", "v4", credentials=creds, cache_discovery=False)
+def get_metrics(service):
     spreadsheet = (
         service.spreadsheets().get(spreadsheetId=FINANCE_SPREADSHEET_ID).execute()
     )
@@ -123,7 +122,11 @@ def get_metrics():
 
 
 if __name__ == "__main__":
-    start_http_server(8000)
+    start_http_server(PORT)
+
+    creds = get_google_creds()
+    service = build("sheets", "v4", credentials=creds, cache_discovery=False)
+
     while True:
-        get_metrics()
+        get_metrics(service)
         time.sleep(60 * 60 * 24)
