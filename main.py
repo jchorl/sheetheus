@@ -14,6 +14,7 @@ SCOPES = ["https://www.googleapis.com/auth/spreadsheets"]
 FINANCE_SPREADSHEET_ID = os.getenv("FINANCE_SPREADSHEET_ID")
 PORT = os.getenv("PORT", 8080)
 IGNORED_SHEETS = ["Template", "Categories", "IRA/401k/HSA log"]
+CREDS_PATH = "/opt/app/.creds/token.pickle"
 
 
 def get_google_creds():
@@ -21,8 +22,8 @@ def get_google_creds():
     # The file token.pickle stores the user's access and refresh tokens, and is
     # created automatically when the authorization flow completes for the first
     # time.
-    if os.path.exists("token.pickle"):
-        with open("token.pickle", "rb") as token:
+    if os.path.exists(CREDS_PATH):
+        with open(CREDS_PATH, "rb") as token:
             creds = pickle.load(token)
 
     # If there are no (valid) credentials available, let the user log in.
@@ -34,7 +35,7 @@ def get_google_creds():
             creds = flow.run_console()
         # Save the credentials for the next run
         # cloud functions have a read-only fs so just refresh the token every time
-        with open("token.pickle", "wb") as token:
+        with open(CREDS_PATH, "wb") as token:
             pickle.dump(creds, token)
 
     return creds
