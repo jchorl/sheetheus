@@ -12,7 +12,7 @@ from prometheus_client import start_http_server, Gauge
 SCOPES = ["https://www.googleapis.com/auth/spreadsheets"]
 
 FINANCE_SPREADSHEET_ID = os.getenv("FINANCE_SPREADSHEET_ID")
-PORT = os.getenv("PORT", 8080)
+PORT = int(os.getenv("PORT", 8080))
 IGNORED_SHEETS = ["Template", "Categories", "IRA/401k/HSA log"]
 CREDS_PATH = "/opt/app/.creds/token.pickle"
 
