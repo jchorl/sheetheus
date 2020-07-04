@@ -15,7 +15,7 @@ FINANCE_SPREADSHEET_ID = os.getenv("FINANCE_SPREADSHEET_ID")
 SKIP_WRITING_CREDS = os.getenv("RO_FILESYSTEM") != ""
 PORT = int(os.getenv("PORT", 8080))
 IGNORED_SHEETS = ["Template", "Categories", "IRA/401k/HSA log"]
-CREDS_PATH = "/opt/app/.creds/token.pickle"
+CREDS_PATH = os.getenv("CRED_PATH", "/opt/app/.creds/token.pickle")
 
 
 def get_google_creds():
@@ -121,7 +121,7 @@ def get_metrics(service):
     for t in all_transactions:
         labels = get_labels(t)
         timestamps.labels(**labels).set(t["date"].timestamp())
-        amounts.labels(**labels).set(t["amount"] * 100)
+        amounts.labels(**labels).set(round(float(t["amount"]) * 100))
 
 
 if __name__ == "__main__":
